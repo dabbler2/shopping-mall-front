@@ -1,12 +1,14 @@
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
-import ProductMain from './components/product/product-main'
+import ProductCreate from './components/product/product-create'
 import SearchMain from
 './components/search/search-main'
 import ProductDetail from './components/product/product-detail'
 
 const router = createBrowserRouter([
 	{ path: '', element: <p>Hello world</p> },
-	{ path: 'product', element: <ProductMain /> },
+	{ path: 'product', children: [
+		{ path: 'create', element: <ProductCreate />}
+	]},
 	{ path: 'productDetail', element: <ProductDetail /> },
 	{ path: 'search', element: <SearchMain /> }
 ])
