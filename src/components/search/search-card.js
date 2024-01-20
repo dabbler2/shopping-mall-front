@@ -1,5 +1,6 @@
 import React, {useState,useEffect} from 'react'
 import Card from 'react-bootstrap/Card'
+import { useNavigate } from 'react-router-dom'
 
 const style = {
 	margin: '10px auto',
@@ -30,10 +31,11 @@ const decimal1 = (total,count) => {
 }
 
 export default function SearchCard(props){
-	const {name, thumbnail, price, sale_price, rating_total, rating_count, sales_volume} = props.product
+	const {id, name, thumbnail, price, sale_price, rating_total, rating_count, sales_volume} = props.product
+	const navigate = useNavigate()
 	return (
-		<div style={style}>
-			<img style={imgStyle} src={thumbnail || './tree.jpg'} />
+		<div onClick={() => navigate(`../productDetail?id=${id}`)} style={style}>
+			<img style={imgStyle} src={thumbnail || 'default.png'} />
 			<Card style={cardStyle}>
 				<Card.Header> <h2>{name}</h2> </Card.Header>
 				<Card.Body> 
