@@ -6,15 +6,21 @@ import Card from 'react-bootstrap/Card'
 const style = {
 	margin: '10px auto',
 	padding: '10px',
-	width: 600
+	width: 700
+}
+
+const thumbnailStyle = {
+	borderRadius: 15,
+	objectFit: 'cover',
+	width: 360,
+	height: 270,
+	marginRight: 20
 }
 
 const imgStyle = {
-	borderRadius: 15,
 	objectFit: 'cover',
-	width: 300,
-	height: 225,
-	marginRight: 20
+	width: '100%',
+	margin: '10px 0'
 }
 
 const decimal1 = (total,count) => {
@@ -25,10 +31,10 @@ const decimal1 = (total,count) => {
 
 export default function ProductCard(props){
 	const [product,setProduct] = useState({})
+	const [images,setImages] = useState([])
 	const [searchParams, setSearchParams] = useSearchParams()
 	const navigate = useNavigate()
 	const id = +searchParams.get('id')
-	console.log(id)
 	if(isNaN(id) || !Number.isInteger(id) || id<1){
 		alert('해당 상품이 존재하지 않습니다.')
 		navigate('/')
@@ -42,25 +48,35 @@ export default function ProductCard(props){
 		}
 		const product_ = await res.json()
 		setProduct(product_)
-		console.log(product_)
+	}
+	
+	const getImages = async () => {
+		const res = await fetch(server+`/product/${id}/image`)
+		if(res.status!=200) return
+		const images_ = await res.json()
+		setImages(images_)
 	}
 	
 	useEffect(() => {
 		getProduct()
+		getImages()
 	},[])
 	
-	// 디테일 깔기
 	return (
 		<Card style={style}>
 			<Card.Header style={{display:'flex'}}>
-				<img style={imgStyle} src={product.thumbnail || './tree.jpg'} />
+				<img style={thumbnailStyle} src={product.thumbnail || './tree.jpg'} />
 				<div>
 					<h1>{product.name}</h1>
 					<h3>{product.price}원</h3>
 					<h3>{product.sale_price}원</h3>
+					<p>{product.body}</p>
 					<p>{decimal1(product.rating_total,product.rating_count)} ({product.rating_count}) 판매량: {product.sales_volume}</p>
 				</div>
 			</Card.Header>
+			<Card.Body>
+				{images.map(image => <img key={image.id} style={imgStyle} src={image.original_url} />)}
+			</Card.Body>
 		</Card>
 	)
 }
