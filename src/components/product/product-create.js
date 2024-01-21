@@ -19,8 +19,11 @@ export default function ProductCreate(props){
 		const res = await fetch(server+'/product', {method:'post',
 		headers:{'Content-Type':'application/json', Authorization, refreshtoken},
 		body: JSON.stringify(body)})
-		alert('상품 등록이 완료되었습니다.')
-		navigate('/')
+		if(res.status===201){
+			alert('상품 등록이 완료되었습니다.')
+			navigate('/')
+		}
+		return alert('오류가 발생했습니다. 다시 시도해주세요.')
 	}
 	
 	return (
