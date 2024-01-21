@@ -52,7 +52,6 @@ export default function ProductUpdate(props){
 		headers:{'Content-Type':'application/json', Authorization, refreshtoken},
 		body: JSON.stringify(body_)})
 		if(res.status!==200) return alert('오류가 발생했습니다. 다시 시도해주세요.')
-		// 썸네일 업로드
 		if(body.thumbnail){
 			const formData = new FormData()
 			formData.append('image', thumbnail)
@@ -61,7 +60,7 @@ export default function ProductUpdate(props){
 			body: formData})
 		}
 		alert('상품 수정이 완료되었습니다.')
-		//navigate('/')
+		navigate('/')
 	}
 	
 	const softDeleteProduct = async (e) => {

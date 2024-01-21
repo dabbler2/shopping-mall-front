@@ -34,17 +34,16 @@ export default function SearchCard(props){
 	const {id, name, thumbnail, price, sale_price, rating_total, rating_count, sales_volume} = props.product
 	const navigate = useNavigate()
 	return (
-		<div onClick={() => navigate(`../productDetail?id=${id}`)} style={style}>
-			<img style={imgStyle} src={thumbnail || 'default.png'} />
-			<Card style={cardStyle}>
-				<Card.Header> <h2>{name}</h2> </Card.Header>
-				<Card.Body> 
+		<Card onClick={() => window.open(`../productDetail?id=${id}`,'_blank')} style={style}>
+			<Card.Header style={{display:'flex'}}>
+				<img style={imgStyle} src={thumbnail || 'default.png'} />
+				<div>
+					<h2>{name}</h2>
 					<h4>{price}원</h4>
 					<h4>{sale_price}원</h4>
 					<p>{decimal1(rating_total,rating_count)} ({rating_count}) 판매량: {sales_volume}</p>
-				</Card.Body>
-			</Card>
-		</div>
-		
+				</div>
+			</Card.Header>
+		</Card>
 	)
 }
