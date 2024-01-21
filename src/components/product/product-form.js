@@ -7,6 +7,13 @@ const style = {
 	margin: '5px auto'
 }
 
+const thumbnailStyle = {
+	borderRadius: 15,
+	objectFit: 'cover',
+	width: 240,
+	height: 180
+}
+
 const categoryList = ['Food', 'Health', 'Household', 'Pet', 'Cosmetics', 'Office', 'Appliances', 'Furniture', 'Media', 'Others']
 const statusList = ['Salable', 'Unsalable', 'Pending']
 
@@ -17,6 +24,7 @@ export default function ProductForm(props){
 	const [product_body,setBody] = useState('')
 	const [price,setPrice] = useState(1)
 	const [sale_price,setSalePrice] = useState(1)
+	const [thumbnail,setThumbnail] = useState('')
 	
 	useEffect(() => {
 	    setName(props.product.name || '')
@@ -25,10 +33,16 @@ export default function ProductForm(props){
 	    setBody(props.product.body || '')
 	    setPrice(props.product.price || 1)
 	    setSalePrice(props.product.sale_price || 1)
+		setThumbnail(props.product.thumbnail || '')
 	}, [props.product])
 	
+	const handleFileChange = e => {
+		const file = e.target.files[0]
+		if (file) setThumbnail(file)
+  }
+	
 	return (
-		<Form style={style} onSubmit={e => props.onSubmit(e,{name,category,status,body:product_body,price,sale_price})}>
+		<Form style={style} onSubmit={e => props.onSubmit(e,{name,category,status,body:product_body,price,sale_price,thumbnail})}>
 			<Form.Group>
 				<Form.Label>이름</Form.Label>
 				<Form.Control required onChange={e => setName(e.target.value)} defaultValue={props.product.name || ''} />
@@ -56,6 +70,13 @@ export default function ProductForm(props){
 			<Form.Group>
 				<Form.Label>판매가</Form.Label>
 				<Form.Control type='number' onChange={e => setSalePrice(+e.target.value)} defaultValue={props.product.sale_price || ''} />
+			</Form.Group>
+			<Form.Group>
+				<Form.Label>썸네일 (jpg, jpeg, png만 가능, 2MB 이하)</Form.Label>
+				{props.product.thumbnail && (
+					<img style={thumbnailStyle} src={props.product.thumbnail} />
+				)}
+				<Form.Control type='file' onChange={handleFileChange}  accept='.jpg, .jpeg, .png'defaultValue={props.product.thumbnail || ''} />
 			</Form.Group>
 			<br />
 			<Button type='submit' className='me-2'>{props.tag || '상품 등록'}</Button>

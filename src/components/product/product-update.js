@@ -47,15 +47,21 @@ export default function ProductUpdate(props){
 	
 	const updateProduct = async (e,body) => {
 		e.preventDefault()
+		const {thumbnail, ...body_} = body
 		const res = await fetch(server+`/product/${id}`, {method:'PATCH',
 		headers:{'Content-Type':'application/json', Authorization, refreshtoken},
-		body: JSON.stringify(body)})
-		console.log(res)
-		if(res.status===200){
-			alert('상품 수정이 완료되었습니다.')
-			navigate('/')
+		body: JSON.stringify(body_)})
+		if(res.status!==200) return alert('오류가 발생했습니다. 다시 시도해주세요.')
+		// 썸네일 업로드
+		if(body.thumbnail){
+			const formData = new FormData()
+			formData.append('image', thumbnail)
+			const res_thumbnail = await fetch(server+`/product/${id}/thumbnail`, {method:'PATCH',
+			headers:{Authorization, refreshtoken},
+			body: formData})
 		}
-		return alert('오류가 발생했습니다. 다시 시도해주세요.')
+		alert('상품 수정이 완료되었습니다.')
+		//navigate('/')
 	}
 	
 	const softDeleteProduct = async (e) => {
