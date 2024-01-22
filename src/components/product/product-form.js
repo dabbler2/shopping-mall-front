@@ -1,6 +1,7 @@
 import {useState, useEffect} from 'react'
 import Form from 'react-bootstrap/Form'
 import Button from 'react-bootstrap/Button'
+import {server} from '../../constant.js'
 
 const style = {
 	width: 500,
@@ -14,17 +15,27 @@ const thumbnailStyle = {
 	height: 180
 }
 
+const imgStyle = {
+	width: 'auto',
+	height: 'auto',
+	maxWidth: 200,
+	maxHeight: 150,
+	display: 'block',
+	margin: '10px'
+}
+
 const categoryList = ['Food', 'Health', 'Household', 'Pet', 'Cosmetics', 'Office', 'Appliances', 'Furniture', 'Media', 'Others']
 const statusList = ['Salable', 'Unsalable', 'Pending']
 
-export default function ProductForm(props){
-	const [name,setName] = useState('')
-	const [category,setCategory] = useState(9)
-	const [status,setStatus] = useState(0)
-	const [product_body,setBody] = useState('')
-	const [price,setPrice] = useState(1)
-	const [sale_price,setSalePrice] = useState(1)
-	const [thumbnail,setThumbnail] = useState('')
+const ProductForm = props => {
+	const [name,setName] = useState(props.product?.name || '')
+	const [category,setCategory] = useState(props.product?.category || 9)
+	const [status,setStatus] = useState(props.product?.status || 0)
+	const [product_body,setBody] = useState(props.product?.body || '')
+	const [price,setPrice] = useState(props.product?.price || 1)
+	const [sale_price,setSalePrice] = useState(props.product?.sale_price || 1)
+	const [thumbnail,setThumbnail] = useState(props.product?.thumbnail || '')
+	const [images, setImages] = useState(props.images || [])
 	
 	useEffect(() => {
 	    setName(props.product?.name || '')
@@ -34,12 +45,17 @@ export default function ProductForm(props){
 	    setPrice(props.product?.price || 1)
 	    setSalePrice(props.product?.sale_price || 1)
 		setThumbnail(props.product?.thumbnail || '')
-	}, [props.product])
+		setImages(props.images || [])
+	}, [props.product, props.images])
+	
+	// 인증 추가
+	const [Authorization,setAuthorization] = useState('Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNzA1NzYyOTkxLCJleHAiOjE3MDU3NjMxMTF9.0q5KuDZSPh2TAn5-ofLTZDNFrX5eSTuC8HzwyEvvFfw')
+	const [refreshtoken,setRefreshtoken] = useState('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE3MDU3NjI5OTEsImV4cCI6MTcwNjM2Nzc5MX0.8GaubrgbLn1wUHoQrLLyWlGd7FqETkZnz6_7-QpwTBE')
 	
 	const handleFileChange = e => {
 		const file = e.target.files[0]
 		if (file) setThumbnail(file)
-  }
+	}
 	
 	return (
 		<Form style={style} onSubmit={e => props.onSubmit(e,{name,category,status,body:product_body,price,sale_price,thumbnail})}>
@@ -78,9 +94,18 @@ export default function ProductForm(props){
 				)}
 				<Form.Control type='file' onChange={handleFileChange}  accept='.jpg, .jpeg, .png' defaultValue={props.product?.thumbnail || ''} />
 			</Form.Group>
+			<Form.Group>
+				<Form.Label>상품 이미지 (jpg, jpeg, png만 가능, 2MB 이하)</Form.Label>
+				{props.images?.length && (props.images.map(image => (
+					<img style={imgStyle} src={image.original_url} key={image.id} data-image-id={image.id} onClick={props.deleteImage} />
+				)))}
+				{/*<Form.Control type='file' onChange={handleFileChange}  accept='.jpg, .jpeg, .png' />*/}
+			</Form.Group>
 			<br />
 			<Button type='submit' className='me-2'>{props.tag || '상품 등록'}</Button>
-			{props.tag && (<Button onClick={props.softDeleteProduct} className='me-2'>상품 삭제</Button>)}
+			{props.tag && (<Button onClick={props.deleteProduct} className='me-2'>상품 삭제</Button>)}
 		</Form>
 	)
 }
+
+export default ProductForm

@@ -9,7 +9,7 @@ const style = {
 	margin: '10px auto'
 }
 
-export default function ProductUpdate(props){
+const ProductUpdate = props => {
 	const [product,setProduct] = useState({})
 	const [images,setImages] = useState([])
 	const [searchParams, setSearchParams] = useSearchParams()
@@ -63,20 +63,43 @@ export default function ProductUpdate(props){
 		navigate('/')
 	}
 	
-	const softDeleteProduct = async (e) => {
+	const deleteProduct = async e => {
 		e.preventDefault()
-		const res = await fetch(server+`/product/${id}`, {method:'delete',
-		headers:{'Content-Type':'application/json', Authorization, refreshtoken}})
-		if(res.status===200){
-			alert('상품 삭제가 완료되었습니다.')
-			navigate('/')
+		try{
+			const res = await fetch(server+`/product/${id}`, {method:'delete',
+			headers:{'Content-Type':'application/json', Authorization, refreshtoken}})
+			if(res.status===200){
+				alert('상품 삭제가 완료되었습니다.')
+				navigate('/')
+			}
+		}catch(e){
+			alert('오류가 발생했습니다. 다시 시도해주세요.')
 		}
-		return alert('오류가 발생했습니다. 다시 시도해주세요.')
+	}
+	
+	const deleteImage = async e => {
+		if(window.confirm('이미지를 삭제하시겠습니까?')){
+			try{
+				const image_id = +e.target.dataset.imageId
+				const res = await fetch(server+`/product/image/${image_id}`,{method:'delete',
+				headers:{'Content-Type':'application/json', Authorization, refreshtoken}})
+				alert(res.status)
+				if(res.status===200){
+					const updatedImages = images.filter(image => image.id !== image_id)
+					setImages(updatedImages)
+					return alert('이미지 삭제가 완료되었습니다.')
+				}
+			}catch(e){
+				alert('오류가 발생했습니다. 다시 시도해주세요.')
+			}
+		}
 	}
 	
 	return (
 		<div style={style}>
-			<ProductForm onSubmit={updateProduct} softDeleteProduct={softDeleteProduct} product={product} tag='상품 수정' />
+			<ProductForm onSubmit={updateProduct} deleteProduct={deleteProduct} product={product} images={images} deleteImage={deleteImage} tag='상품 수정' />
 		</div>
 	)
 }
+
+export default ProductUpdate
