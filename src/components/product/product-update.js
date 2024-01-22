@@ -77,6 +77,17 @@ const ProductUpdate = props => {
 		}
 	}
 	
+	const uploadImage = async (e,image_) => {
+		const formData = new FormData()
+		formData.append('image', image_)
+		const res = await fetch(server+`/product/${id}/image`, {method:'post',
+		headers:{Authorization, refreshtoken},
+		body: formData})
+		const image__ = await res.json()
+		setImages([...images,image__])
+		console.log(images)
+	}
+	
 	const deleteImage = async e => {
 		if(window.confirm('이미지를 삭제하시겠습니까?')){
 			try{
@@ -97,7 +108,7 @@ const ProductUpdate = props => {
 	
 	return (
 		<div style={style}>
-			<ProductForm onSubmit={updateProduct} deleteProduct={deleteProduct} product={product} images={images} deleteImage={deleteImage} tag='상품 수정' />
+			<ProductForm onSubmit={updateProduct} deleteProduct={deleteProduct} product={product} images={images} uploadImage={uploadImage} deleteImage={deleteImage} tag='상품 수정' />
 		</div>
 	)
 }

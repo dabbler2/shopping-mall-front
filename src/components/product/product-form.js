@@ -35,7 +35,8 @@ const ProductForm = props => {
 	const [price,setPrice] = useState(props.product?.price || 1)
 	const [sale_price,setSalePrice] = useState(props.product?.sale_price || 1)
 	const [thumbnail,setThumbnail] = useState(props.product?.thumbnail || '')
-	const [images, setImages] = useState(props.images || [])
+	const [images,setImages] = useState(props.images || [])
+	const [image_,setImage_] = useState('')
 	
 	useEffect(() => {
 	    setName(props.product?.name || '')
@@ -55,6 +56,11 @@ const ProductForm = props => {
 	const handleFileChange = e => {
 		const file = e.target.files[0]
 		if (file) setThumbnail(file)
+	}
+
+	const handleImageChange = e => {
+		const file = e.target.files[0]
+		if (file) setImage_(file)
 	}
 	
 	return (
@@ -92,14 +98,15 @@ const ProductForm = props => {
 				{props.product?.thumbnail && (
 					<img style={thumbnailStyle} src={props.product?.thumbnail} />
 				)}
-				<Form.Control type='file' onChange={handleFileChange}  accept='.jpg, .jpeg, .png' defaultValue={props.product?.thumbnail || ''} />
+				<Form.Control type='file' onChange={handleFileChange} accept='.jpg, .jpeg, .png' defaultValue={props.product?.thumbnail || ''} />
 			</Form.Group>
 			<Form.Group>
 				<Form.Label>상품 이미지 (jpg, jpeg, png만 가능, 2MB 이하)</Form.Label>
-				{props.images?.length && (props.images.map(image => (
+				{props.images && (props.images.map(image => (
 					<img style={imgStyle} src={image.original_url} key={image.id} data-image-id={image.id} onClick={props.deleteImage} />
 				)))}
-				{/*<Form.Control type='file' onChange={handleFileChange}  accept='.jpg, .jpeg, .png' />*/}
+				<Form.Control type='file' onChange={handleImageChange} accept='.jpg, .jpeg, .png' />
+				<Button onClick={e => props.uploadImage(e,image_)}>이미지 추가</Button>
 			</Form.Group>
 			<br />
 			<Button type='submit' className='me-2'>{props.tag || '상품 등록'}</Button>
